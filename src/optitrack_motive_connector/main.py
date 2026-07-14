@@ -5,6 +5,7 @@ SERVER_IP = "127.0.0.1"
 LOCAL_IP  = "127.0.0.1"
 PROTOCOL_VERSION = Version(4, 1)    # 설치된 Motive 3.4.0.2에 맞는 설정입니다.
 
+rigid_body_names = {}
 def receive_new_desc(desc: DataDescriptions) -> None:
     """Store the mapping from rigid-body IDs to names."""
     for rigid_body in desc.rigid_bodies:

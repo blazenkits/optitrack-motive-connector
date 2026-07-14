@@ -13,3 +13,4 @@ if __name__ == "__main__":
         df = context.to_dataframe()      # Should have 3 second worth of logs
         print(df.iloc[0])
         print(df.iloc[-1])
+        df.to_csv("capture.csv", index=False)

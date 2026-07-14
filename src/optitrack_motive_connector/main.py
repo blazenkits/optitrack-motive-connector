@@ -19,7 +19,6 @@ if __name__ == "__main__":
     streaming_client.on_data_frame_received_event.handlers.append(receive_new_frame)
 
     with streaming_client:
-        streaming_client.request_modeldef()
 
         for i in range(10):
             time.sleep(1)

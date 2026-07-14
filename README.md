@@ -57,7 +57,7 @@ Edit -> Settings -> NatNet -> Enable
 
 ## 기본 DataFrame 형식
 
-기본 설정에서는 한 행이 한 프레임의 한 rigid body를 나타냅니다.
+현재 설정에서는 한 행이 한 프레임의 한 rigid body를 나타냅니다.
 
 | 열 | 설명 |
 |---|---|

@@ -8,3 +8,4 @@ client = NatNetClient(
 
 with client:
     print("Connected!")
+    client.request_modeldef()

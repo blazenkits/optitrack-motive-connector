@@ -11,5 +11,5 @@ if __name__ == "__main__":
         context.sleep(2)
         context.stop_recording()
         df = context.to_dataframe()      # Should have 3 second worth of logs
-        print(df.head)
-        print(df.tail)
+        print(df.head[])
+        print(df.tail())

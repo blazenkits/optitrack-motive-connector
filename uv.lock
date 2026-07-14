@@ -1,0 +1,23 @@
+version = 1
+revision = 3
+requires-python = ">=3.13"
+
+[[package]]
+name = "natnet"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/3e/b29f2ed94d12355695639410b18f9bb12a1f17e030d7d82c1ac5a2585669/natnet-0.2.0.tar.gz", hash = "sha256:e348c440b34716815186392686e7fa594cfc1a74d7050d92793b8ebb09e0aec5", size = 13238, upload-time = "2025-09-09T15:00:57.718Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f0/2b/14e6995b3d05c25039acb31178816370079665e7aeb59d83e5fb783b870c/natnet-0.2.0-py3-none-any.whl", hash = "sha256:babeba88c41df3b001658b5994bf1c15c3b12fa1110f7fb9a86e393444efb14e", size = 14457, upload-time = "2025-09-09T15:00:56.424Z" },
+]
+
+[[package]]
+name = "optitrack-motive-connector"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "natnet" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "natnet", specifier = ">=0.2.0" }]

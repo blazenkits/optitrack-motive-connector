@@ -1,0 +1,19 @@
+[project]
+name = "optitrack-motive-connector"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Sungmin Choe", email = "77095432+blazenkits@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "natnet>=0.2.0",
+]
+
+[project.scripts]
+optitrack-motive-connector = "optitrack_motive_connector:main"
+
+[build-system]
+requires = ["uv_build>=0.11.15,<0.12.0"]
+build-backend = "uv_build"

@@ -1,5 +1,5 @@
 from natnet import *
-
+import time
 
 
 def receive_new_frame(data_frame: DataFrame):

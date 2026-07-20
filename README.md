@@ -1,8 +1,7 @@
 ## Optitrack Motive Connector
 
 파이썬 스크립트로 간단하게 Optrack/Motive를 조절할 수 있는 도구입니다.
-
-- Motive의 명령어를 직접 실행할 수 있습니다. (카메라를 직접 켜기, 끄기 etc)
+- Motive의 명령어를 직접 실행할 수 있습니다. (녹화 시작, 종료 etc)
 
 - 판다스 Dataframe로 원하는 시간만큼 캡쳐해 출력할 수 있습니다.
 
@@ -67,7 +66,7 @@ Edit -> Settings -> NatNet -> Enable
 
 ## 기본 DataFrame 형식
 
-기본 설정에서는 한 행이 한 프레임의 한 rigid body를 나타냅니다.
+현재 설정에서는 한 행이 한 프레임의 한 rigid body를 나타냅니다.
 
 | 열 | 설명 |
 |---|---|

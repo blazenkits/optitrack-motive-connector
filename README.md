@@ -13,7 +13,7 @@ PC에 설치된 Motive를 서버로 이용해서 NatNet으로 통신합니다.
 
 ### 작동 방법 
 ```python
-# 3초간 녹화를 999번 반복하는 스크립트
+# 3초간 녹화를 998번 반복하는 스크립트
 from optitrack_motive_connector import context
 from pandas import DataFrame
 import pandas as pd

@@ -1,5 +1,6 @@
-파이썬 스크립트로 간단하게 Optitrack/Motive를 조절할 수 있는 도구입니다.
+## Optitrack Motive Connector
 
+파이썬 스크립트로 간단하게 Optrack/Motive를 조절할 수 있는 도구입니다.
 - Motive의 명령어를 직접 실행할 수 있습니다. (녹화 시작, 종료 etc)
 
 - 판다스 Dataframe로 원하는 시간만큼 캡쳐해 출력할 수 있습니다.
@@ -12,34 +13,42 @@ PC에 설치된 Motive를 서버로 이용해서 NatNet으로 통신합니다.
 
 ### 작동 방법 
 ```python
+# 3초간 녹화를 999번 반복하는 스크립트
 from optitrack_motive_connector import context
+from pandas import DataFrame
+import pandas as pd
 
+if __name__ == "__main__":
+    
+    records = []
 
-context.init()
+    context.init(
+        server_ip_address= "127.0.0.1",
+        local_ip_address = "127.0.0.1"
+    )    # 기본 세팅
 
-with context.safeguard: # 서버 연결이 끊어질 시 자동으로 처리합니다.
+    with context.connection:
+        context.start_recording()           # 녹화 시작
 
-    # 서버에 연결합니다.
-    context.connect()
+        for capture_label in range(1, 999): # 반복
 
-    # 녹화를 시작합니다.
-    context.start_recording()
+            print(f"Starting capture {capture_label}")
 
-    # 3초 동안 정보를 수집하여 로그에 기록합니다.
-    context.capture(3)
+            capture: DataFrame = context.capture(3.0, f"Capture {capture_label}")  # 3초동안 데이터를 기록하고 DataFrame로 반환
 
-    # 2초를 더 기다립니다. (정보를 수집하지 않습니다.)
-    context.sleep(2)
+            records.append(                
+                capture.groupby(["label", "rigid_body_id"]).agg(      
+                    average_x=("x", "mean"),
+                    average_y=("y", "mean"),
+                    average_z=("z", "mean"),
+                    )
+            )   # 3초간 데이터의 RigidBody당 평균 위치를 기록
+            
+            context.sleep(2)    # 2초동안 수면
 
-    # API 명령어를 직접 보낼수도 있습니다.
-    context.send_command(...)
-
-    # 녹화를 종료합니다.
-    context.stop_recording()
-
-    # 판다스 데이터프레임으로 변환합니다.
-    dataframe = context.to_dataframe()
-    dataframe.to_csv("capture.csv", index=False)
+        
+        context.stop_recording()  # 녹화 종료
+        df = pd.concat(records)   # 최종 DataFrame 생성
 ```
 ## 설치
 

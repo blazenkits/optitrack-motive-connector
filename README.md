@@ -64,6 +64,10 @@ Edit -> Settings -> NatNet -> Enable
 
 - 로컬 실행시 Local Interface: Loopback / Transmission Type: Unicast
 
+Live Mode에서 진행해야 합니다. (Edit Mode에서는 프레임을 송신하지 않습니다.)
+
+Motive 3.4.0.2는 NatNet 4.2를 사용합니다.
+
 ## 기본 DataFrame 형식
 
 현재 설정에서는 한 행이 한 프레임의 한 rigid body를 나타냅니다.

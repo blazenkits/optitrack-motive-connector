@@ -5,7 +5,9 @@ build/
 dist/
 wheels/
 *.egg-info
-test.ipynb
+*.ipynb
+/capture*.csv
+/capture*.gif
 # Virtual environments
 .venv
 .vscode

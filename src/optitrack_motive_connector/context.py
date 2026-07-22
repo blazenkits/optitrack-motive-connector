@@ -18,7 +18,7 @@ CaptureConfig = Callable[[DataFrame, str], Iterable[CaptureRow]]
 # client singleton
 client: NatNetClient | None = None
 
-protocol_version: Version = Version(4, 2)
+_expected_protocol_version: Version | None = Version(4, 2)
 
 # 지금까지의 녹화 정보
 latest_frame: DataFrame | None = None
@@ -78,19 +78,19 @@ def requires_connection(fn):
 def init(server_ip_address = "127.0.0.1",
          local_ip_address  = "127.0.0.1",
          use_multicast     = False,
-         protocol_version: tuple[int,int] | None  = None
+         protocol_version: tuple[int,int] | None  = (4, 2)
          ):
     """
         서버 설정 및 hook을 연결합니다.
     """
-    global client
+    global client, _expected_protocol_version
 
     client = NatNetClient(server_ip_address=server_ip_address, local_ip_address=local_ip_address, use_multicast=use_multicast)
     client.on_data_description_received_event.handlers.append(_receive_new_desc)
     client.on_data_frame_received_event.handlers.append(_receive_new_frame)
-    if  client.protocol_version is not None:
-        client.protocol_version = Version(protocol_version)
-        print(f"Natnet version override: {client.protocol_version}")
+    _expected_protocol_version = (
+        Version(*protocol_version) if protocol_version is not None else None
+    )
 
 def connect():
     """
@@ -105,8 +105,25 @@ def connect():
         return
 
     client.connect()
+
+    actual_protocol_version = client.protocol_version
+    if (
+        _expected_protocol_version is not None
+        and (
+            actual_protocol_version is None
+            or actual_protocol_version.truncate(2)
+            != _expected_protocol_version.truncate(2)
+        )
+    ):
+        disconnect()
+        raise RuntimeError(
+            f"NatNet 버전이 일치하지 않습니다: "
+            f"expected {_expected_protocol_version.truncate(2)}, "
+            f"received {actual_protocol_version}"
+        )
+
     client.request_modeldef()
-    print(f"NatNet 버전 {client.protocol_version}")
+    print(f"NatNet 버전 {actual_protocol_version}")
 
 def disconnect() -> None:
     """NatNet 서버 연결을 종료합니다."""

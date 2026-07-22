@@ -8,3 +8,4 @@ wheels/
 test.ipynb
 # Virtual environments
 .venv
+.vscode/

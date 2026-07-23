@@ -28,7 +28,6 @@ if __name__ == "__main__":
     )    # 기본 세팅
 
     with context.connection:
-        context.start_recording()           # 녹화 시작
 
         for capture_label in range(1, 999): # 반복
 
@@ -46,17 +45,8 @@ if __name__ == "__main__":
             
             context.sleep(2)    # 2초동안 수면
 
-        
-        context.stop_recording()  # 녹화 종료
         df = pd.concat(records)   # 최종 DataFrame 생성
 ```
-## 설치
-
-uv를 사용하면
-```bash
-uv sync
-```
-또는 기본 파이썬에 `natnet`, `pandas` 패키지를 설치하면 됩니다.
 
 ## Motive 설정
 

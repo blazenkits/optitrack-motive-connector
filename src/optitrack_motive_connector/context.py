@@ -122,6 +122,11 @@ def connect():
             f"received {actual_protocol_version}"
         )
 
+    # Keep receiving frames (and, for unicast, sending NatNet keepalives) for
+    # the entire connection lifetime. Without this, ordinary work between
+    # capture() calls can leave update_sync() idle long enough for Motive to
+    # stop the unicast stream.
+    client.run_async()
     client.request_modeldef()
     print(f"NatNet 버전 {actual_protocol_version}")
 
@@ -275,7 +280,10 @@ _this_capture: list[CaptureRow] = []
 _capture_label = ""
 @requires_connection
 def _poll() -> None:
-    client.update_sync() #type:ignore
+    # run_async() owns socket polling during normal connections. Retain the
+    # synchronous path for compatible/custom NatNet clients.
+    if not client.running_asynchronously: # type: ignore[union-attr]
+        client.update_sync() # type: ignore[union-attr]
     time.sleep(PACKET_LISTEN_WAIT)
 
 
@@ -315,12 +323,11 @@ def _receive_new_frame(data_frame: DataFrame) -> None:
     """Convert one NatNet frame into one record per rigid body."""
     global latest_frame, window_started_at, _capture_ends_at
 
-    latest_frame = data_frame
-
     if window_started_at is None:
         window_started_at = data_frame.suffix.timestamp
 
     if not _is_capturing:
+        latest_frame = data_frame
         return
 
     if _capture_ends_at is None:
@@ -328,11 +335,16 @@ def _receive_new_frame(data_frame: DataFrame) -> None:
 
     # update_sync()가 여러 패킷을 처리해도 목표 시각 이후의 프레임은 기록하지 않습니다.
     if data_frame.suffix.timestamp > _capture_ends_at:
+        latest_frame = data_frame
         return
 
     capture = _capture_config or _default_capture_config
     parsed = capture(data_frame, _capture_label)
     _this_capture.extend(_validate_capture_rows(parsed))
+    # Publish the frame only after its rows are fully appended. This prevents
+    # capture() from returning while the asynchronous callback is still
+    # writing the final frame.
+    latest_frame = data_frame
 
 
 def _validate_capture_rows(rows: Iterable[CaptureRow]) -> list[CaptureRow]:
@@ -405,6 +417,9 @@ def _drain_pending_packets() -> None:
     _was_capturing = _is_capturing
     _is_capturing = False
     try:
-        client.update_sync() # type: ignore
+        # An asynchronous client continuously drains its sockets. Calling
+        # update_sync() in that mode raises an assertion in natnet.
+        if not client.running_asynchronously: # type: ignore[union-attr]
+            client.update_sync() # type: ignore[union-attr]
     finally:
         _is_capturing = _was_capturing

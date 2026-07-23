@@ -9,7 +9,7 @@ from typing import Any
 from natnet import *
 import pandas as pd
 import time
-
+import asyncio
 
 # A capture function transforms one NatNet frame into zero or more table rows.
 CaptureRow = dict[str, Any]
@@ -165,6 +165,19 @@ def stop_recording():
 def send_command(command: str):
     ''' 서버에 command 직접 보냅니다. Command는 API 참조 '''
     client.send_command(command)    # type:ignore
+
+@requires_connection
+async def capture_async(
+    duration: float,
+    capture_label: str = "",
+    frame_timeout: float = DEFAULT_FRAME_TIMEOUT,
+) -> pd.DataFrame:
+    return await asyncio.to_thread(
+        capture,
+        duration,
+        capture_label,
+        frame_timeout,
+    )
 
 @requires_connection
 def capture(
